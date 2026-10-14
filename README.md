@@ -75,3 +75,35 @@ Nhóm hiện thực hóa đầy đủ **5 yếu tố của một quy trình "Đ�
 3. **Cơ chế xử lý khi AI không chắc chắn (Structured Handoff):** Khi độ tin cậy của AI < 85% hoặc phát hiện khách hàng bức xúc, hệ thống tự động đóng gói payload bàn giao gồm: *Mã Intent, Mức độ rủi ro, Tóm tắt 3 dòng lịch sử, 2 phương án đề xuất kèm điều khoản chính sách*, chuyển ngay cho nhân viên CS mà không bắt khách hàng lặp lại câu hỏi.
 
 ---
+
+## 5. Dashboard Hành Động Cho Áp Dụng AI (Bản v2 Hoàn Thiện)
+
+| Mã ID | Tầng đo lường | Tên chỉ số | Mốc đầu W0 (Baseline) | Mục tiêu Pilot (Target) | Thực tế thử nghiệm (Pilot Actual) | Nguồn dữ liệu | Người phụ trách | Hành động khi chỉ số xấu | Kết luận trạng thái |
+|---|---|---|---|---|---|---|---|---|---|
+| **P1** | Product | AI eligible verified resolution rate | **52.0%** | **≥70.0%** | **72.4%** | Ticket + AI event + reopen 7d | AI Product Owner | Phân tầng lỗi theo intent/risk; thu hẹp phạm vi bot chỉ xử lý ca low-risk; kiểm tra nguồn FAQ | **PASS** |
+| **W1** | Workflow | Median E2E resolution time reduction | **0.0%** (Gốc 11.5m) | **Giảm ≥20.0%** (≤9.2m) | **Giảm 26.1%** (8.5m) | Ticket timestamps | CS Operations Lead | Rà soát độ trễ handoff bot sang người; tối ưu tóm tắt context; điều chỉnh routing | **PASS** |
+| **Q1** | Quality | QA pass rate | **88.0%** | **≥95.0%** | **96.0%** | QA stratified sample (10%) | QA Lead | Tạm dừng luồng intent có tỷ lệ pass <90%; cập nhật versioned policy; audit nguyên nhân | **PASS** |
+| **T1** | Trust | Repeat contact 7d reduction | **0.0%** (Gốc 18.5%) | **Giảm ≥15.0%** (≤15.7%) | **Giảm 23.2%** (14.2%) | CRM / ticket link by case (7d) | CS Operations Lead | Rà soát danh sách ca lặp lại; bổ sung thông tin giải quyết dứt điểm lần đầu; sửa câu trả lời AI | **PASS** |
+| **R1** | Risk | Critical errors count | **2 ca** | **0 ca** (Hard-stop) | **0 ca** | Incident register, QA audit | Risk Lead | **DỪNG TỨC THÌ (Hard-stop)** toàn bộ luồng tự động hóa bị ảnh hưởng; chuyển 100% sang người | **PASS** |
+| **W2** | Workflow | P90 E2E resolution time reduction | **0.0%** (Gốc 45.0m) | **Giảm ≥10.0%** (≤40.5m) | **Giảm 15.6%** (38.0m) | Ticket timestamps P90 | CS Operations Lead | Phân tích nhóm ticket đuôi dài (long-tail lag); đặt SLA cảnh báo cho ca bị nghẽn | **PASS** |
+| **W3** | Workflow | Handoff context completeness | **65.0%** | **≥98.0%** | **98.5%** | AI to agent handoff logs | Support Tooling Owner | Sửa lỗi thiếu intent/summary/policy citation trong payload chuyển ca; khảo sát CS agent | **PASS** |
+| **Q2** | Quality | Rework / reopen 7d rate | **12.0%** | **≤5.0%** (tối đa) | **4.2%** | CRM reopen flags (7d window) | QA Lead | Audit các ca bị mở lại; xác định xem do AI trả lời thiếu hay CS agent xử lý chưa triệt để | **PASS** |
+
+*Định nghĩa chi tiết, công thức tính toán và dữ liệu phân tầng rủi ro có trong file `dashboard/dashboard_hanh_dong_v2.xlsx`.*
+
+---
+
+## 6. Quyết Định Áp Dụng và Hai Thay Đổi Sau Phản Biện Chéo
+
+### Quyết định chính thức: SỬA (REVISE) & PILOT NHỎ CÓ KIỂM SOÁT
+- **Không rollout ồ ạt:** Mặc dù số lượng chat AI xử lý rất cao, tổ chức kiên quyết không mở rộng đại trà khi chưa kiểm chứng được chất lượng từng phân khúc rủi ro.
+- **Quy tắc cổng kiểm soát:** Nếu R1 > 0 → **Dừng khẩn cấp**; nếu Q1 < 95% hoặc Q2 > 5% → **Sửa đổi và thu hẹp intent**; nếu toàn bộ 8 chỉ số đạt target → **Tiếp tục mở rộng từng bước**.
+
+### Hai thay đổi cốt lõi so với bản v1 sau kiểm tra chéo với Nhóm 02:
+1. **Thay đổi 1 (Phân tầng chỉ số P1 theo Intent & Risk level — Tab Segments):**
+   - *Góp ý từ Nhóm 02:* Bản v1 tính P1 gộp chung toàn bộ ticket, che giấu việc bot thất bại ở các ca tài chính phức tạp.
+   - *Hành động sửa đổi:* Tách bạch P1 qua tab `Segments` theo 3 tầng rủi ro (Low: 87.0% resolution, Med: 70.0%, High: 30.0%) và nhóm ý định (Refund, Account help). Quy định ca High Risk phải định tuyến Human-first.
+2. **Thay đổi 2 (Bổ sung bộ ba kiểm soát W2, W3, Q2 và cơ chế Kill-switch):**
+   - *Góp ý từ Nhóm 02:* Đo Median W1 bỏ lọt các ca kẹt lâu (long-tail lag) khi chuyển ca thiếu ngữ cảnh; cần kiểm soát tỷ lệ làm lại và có cơ chế dừng khẩn cấp.
+   - *Hành động sửa đổi:* Bổ sung ngay vào Dashboard v2 chỉ số W2 (P90 resolution reduction ≥10%), W3 (Handoff completeness ≥98%), Q2 (Rework/Reopen ≤5%), và thiết lập cơ chế **Hard-stop tức thì** cho R1 khi có sự cố nghiêm trọng.
+
