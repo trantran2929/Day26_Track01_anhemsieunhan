@@ -31,3 +31,28 @@
   3. *(W3) Bàn giao người–AI có cấu trúc, Kiểm toán QA và Vòng lặp phản hồi* (Contextual Handoff, QA Sampling & Continuous Feedback Loop).
 - **1 vấn đề quan sát & đo lường được:** Doanh nghiệp quá tập trung vào mục tiêu cắt giảm chi phí ngắn hạn dẫn đến việc AI cố trả lời cả những ca phức tạp/nhạy cảm, câu trả lời thiếu trích dẫn phiên bản chính sách, bàn giao sang nhân viên thiếu bối cảnh khiến khách hàng phải lặp lại từ đầu, làm tăng tỷ lệ mở lại ca (Reopen rate đạt 12% ở quy trình cũ) và buộc CEO Klarna phải công khai thừa nhận sự suy giảm chất lượng [S2].
 
+---
+
+## 3. Chẩn đoán Điểm nghẽn và Hai Nguyên nhân Gốc (Root Causes)
+
+Nhóm tiến hành chẩn đoán qua 5 câu hỏi thực tế và liên kết 3 khung phân tích chuẩn:
+
+### 3.1. Năm câu hỏi chẩn đoán thực tế
+1. **Workflow (Quy trình):** AI có nằm trong công việc thật không?  
+   → *Có xuất hiện nhưng nằm ngoài sự kiểm soát chặt chẽ; AI cố trả lời thay vì phối hợp với nhân viên CS.*
+2. **Con người (Con người):** Người dùng thiếu động lực, kiến thức hay khả năng?  
+   → *Nhân viên CS không thiếu kiến thức sử dụng nhưng thiếu động lực (Desire) vì sợ gánh trách nhiệm khi AI tư vấn sai và ức chế vì nhận ca chuyển tiếp không có tóm tắt.*
+3. **Sẵn sàng (Tổ chức):** Dữ liệu, quyền truy cập và governance đã đủ chưa?  
+   → *Chính sách FAQ chưa có versioning timestamp; chưa phân quyền dữ liệu theo độ nhạy cảm của giao dịch tài chính.*
+4. **Tin cậy (Kiểm soát):** AI sai thì phát hiện, kiểm tra và xử lý thế nào?  
+   → *Hệ thống cũ không có trích dẫn nguồn cụ thể, thiếu cơ chế QA mẫu định kỳ và không có Kill-switch ngắt luồng tự động khi xảy ra sự cố.*
+5. **Đo lường (Chỉ số):** Đang đo activity hay giá trị thực?  
+   → *Hệ thống cũ chỉ đo activity (số lượt chat 2,3 triệu, % chat bot nhận 80%), hoàn toàn bỏ quên chất lượng giải quyết dứt điểm và thời gian chờ đuôi dài (P90).*
+
+### 3.2. Hai nguyên nhân gốc (Root Causes)
+- **RC1 (Quy trình & Ranh giới phân chia việc — Thuộc Mollick Framework):** Ranh giới phân luồng giữa AI và nhân viên CS chưa tối ưu; thiếu phân tầng rủi ro (Risk-tiering). Bot được giao xử lý cả các ca tranh chấp giao dịch tài chính, khi bot không chắc chắn lại thiếu cơ chế bàn giao ngữ cảnh (Handoff payload) chuẩn hóa.
+  - *Căn cứ bằng chứng:* 35% ca chuyển tiếp ở AS-IS thiếu tóm tắt; CEO Klarna thừa nhận thiếu hụt hỗ trợ con người [S2]; SEC filing ghi nhận sự cần thiết của human support [S3].
+- **RC2 (Mức độ sẵn sàng & Đo lường — Thuộc Gartner-Lite & Measurement):** Tổ chức đo lường vanity metrics thay vì outcome metrics; kho tri thức (KB) thiếu quản trị phiên bản (versioned policies) và content owner, dẫn đến việc bot đưa thông tin chính sách cũ gây rủi ro sai sót tài chính (Critical Errors).
+  - *Căn cứ bằng chứng:* Báo cáo PR chỉ nêu số lượng chat gộp [S1]; log khảo sát tiền trạm W0 ghi nhận 2 sự cố sai sót chính sách hoàn tiền.
+
+---
