@@ -107,3 +107,74 @@ Nhóm hiện thực hóa đầy đủ **5 yếu tố của một quy trình "Đ�
    - *Góp ý từ Nhóm 02:* Đo Median W1 bỏ lọt các ca kẹt lâu (long-tail lag) khi chuyển ca thiếu ngữ cảnh; cần kiểm soát tỷ lệ làm lại và có cơ chế dừng khẩn cấp.
    - *Hành động sửa đổi:* Bổ sung ngay vào Dashboard v2 chỉ số W2 (P90 resolution reduction ≥10%), W3 (Handoff completeness ≥98%), Q2 (Rework/Reopen ≤5%), và thiết lập cơ chế **Hard-stop tức thì** cho R1 khi có sự cố nghiêm trọng.
 
+---
+
+## 7. Lộ trình 30–60–90 Ngày (Có Gate & Owner Từng Giai đoạn)
+
+```mermaid
+flowchart LR
+    G1["<b>0–30 NGÀY</b><br/>Chứng minh Vấn đề<br/>Owner: CS Ops Lead"] -->|Gate 1: Logging ≥95%, Baseline W0 chuẩn| G2["<b>31–60 NGÀY</b><br/>Chứng minh Chất lượng<br/>Owner: AI PO + QA Lead"]
+    G2 -->|Gate 2: QA ≥95%, 0 Critical Error, Handoff 100%| G3["<b>61–90 NGÀY</b><br/>Quyết định Mở rộng<br/>Owner: Head of CS + Risk Lead"]
+    G3 -->|Gate 3: P1≥70%, W1 giảm 20%, T1 giảm 15%| SCALE["SCALE-UP CÓ KIỂM SOÁT"]
+```
+
+- **0–30 ngày — Chứng minh Vấn đề (Prove the Problem):**
+  - Khóa taxonomy phân loại intent/risk; trích xuất Baseline W0 (500 tickets); chỉ định Content Owner cho từng chính sách.
+  - *Gate 1:* Tỷ lệ ghi nhận log sự kiện đạt ≥ 95%; dữ liệu W0 được xác thực; chính sách FAQ có versioning và timestamp.
+  - *Chịu trách nhiệm:* **CS Operations Lead**.
+- **31–60 ngày — Chứng minh Chất lượng (Prove the Quality):**
+  - Chạy pilot TO-BE workflow trên 1 squad CS (10 nhân viên); kích hoạt Handoff payload có cấu trúc (W3) và QA mẫu 10%.
+  - *Gate 2:* QA pass rate ≥ 95%; số lỗi Critical Error R1 = 0; 100% ca chuyển người có tóm tắt lịch sử và lý do.
+  - *Chịu trách nhiệm:* **AI Product Owner + QA Lead**.
+- **61–90 ngày — Quyết định Mở rộng (Decide Expansion):**
+  - Đối chiếu số liệu Pilot và Baseline W0 có phân tầng; kiểm tra độ trễ đuôi dài P90 và tỷ lệ khách liên hệ lại (T1).
+  - *Gate 3:* P1 ≥ 70%, W1 giảm ≥ 20%, T1 giảm ≥ 15%, Q2 ≤ 5% và Risk Lead phê duyệt báo cáo an toàn.
+  - *Chịu trách nhiệm:* **Head of CS + Risk Lead**.
+
+---
+
+## 8. Danh mục File Nộp
+
+- [Dashboard Hành Động v2 (Excel hoàn thiện)](dashboard/dashboard_hanh_dong_v2.xlsx) — Đầy đủ 8 tab: Overview, Metrics, Definitions, Roadmap_30_60_90, Sources, Peer_review, Segments, Team_5.
+- [Memo Quyết Định Áp Dụng AI v2 (Markdown)](memo/memo_quyet_dinh.md) — Memo chuẩn 5 phần kèm biên bản phản biện chéo và phụ lục quy trình.
+- [Dashboard Hành Động v1 (Excel gốc phút 80)](v1/dashboard_hanh_dong_v1.xlsx) — Bản gốc ban đầu đối chứng trước phản biện chéo.
+- [Nguồn Bằng Chứng và Giới Hạn Diễn Giải](evidence/nguon_va_gioi_han.md) — Phương pháp luận phân loại F/B/H/D, schema sự kiện và đối chiếu số liệu W0.
+
+---
+
+## 9. Trạng Thái Hoàn Thành Toàn Diện (Self-Audit Checklist)
+
+- [x] Phạm vi đã khóa cụ thể: 1 sản phẩm AI · 1 nhóm người dùng chính · 3 quy trình cốt lõi · 1 vấn đề đo lường được.
+- [x] Chẩn đoán đủ 5 câu hỏi thực tế và vận dụng đúng 3 framework (Gartner-Lite cho readiness, Mollick cho chia việc, ADKAR cho con người).
+- [x] Có 2 nguyên nhân gốc gắn với framework và có ít nhất 4 nguồn bằng chứng kiểm chứng [S1–S4].
+- [x] Mô hình TO-BE thể hiện đầy đủ 5 yếu tố của "Đã ứng dụng" (Công việc, Trách nhiệm, Kiểm soát, Hành vi, Đo lường).
+- [x] Thiết kế 3 thay đổi bắt buộc: Nguồn kiểm chứng (versioned policy), Người chịu trách nhiệm, Xử lý khi AI không chắc chắn.
+- [x] Lộ trình 30–60–90 ngày có owner định danh, tiêu chí Gate định lượng và Failure actions rõ ràng.
+- [x] Dashboard v2 có đủ 8 chỉ số (P1, W1, Q1, T1, R1, W2, W3, Q2) với đầy đủ 6 thành phần: Baseline W0, Target, Pilot Actual, Data Source, Owner, Action when bad.
+- [x] Hoàn thành phiên phản biện chéo thực tế với Nhóm 02: ghi nhận 2 góp ý thực tế, triển khai 2 thay đổi cốt lõi trong v2 và có xác nhận của nhóm bạn.
+- [x] Quyết định rõ ràng: SỬA (REVISE) & PILOT NHỎ CÓ KIỂM SOÁT, kèm cơ chế Hard-stop.
+- [x] Điền đầy đủ thông tin, vai trò và phần đóng góp thực tế của cả 5 thành viên nhóm Anh Em Siêu Nhân.
+
+---
+
+## 10. Năm Câu Tự Kiểm Tra Trước Khi Kết Thúc (Five Rubric Checks)
+
+1. **AI đi vào quy trình nào?**  
+   → AI đi vào 3 bước cụ thể: (W1) Phân loại ý định & phân tầng mức độ rủi ro; (W2) Tự động hóa phản hồi ca rủi ro thấp kèm trích dẫn chính sách phiên bản và soạn thảo nháp cho ca trung bình; (W3) Đóng gói ngữ cảnh bàn giao cho nhân viên CS, kiểm toán mẫu QA 10% và ghi nhận lỗi vào vòng lặp cải tiến.
+2. **Nguyên nhân gốc nằm ở đâu?**  
+   → Nằm ở việc ranh giới chia việc chưa tối ưu (RC1 - Mollick) dẫn đến bot tự động hóa cả các ca rủi ro cao, và hệ thống đo lường thiên lệch về chi phí thay vì chất lượng thực tế (RC2 - Gartner-Lite) cùng kho chính sách thiếu quản trị phiên bản.
+3. **Framework nào giúp trả lời?**  
+   → Gartner-Lite chỉ ra điểm nghẽn Readiness & Absorption; Mollick phân định rõ vùng việc người–AI; ADKAR giải tỏa rào cản tâm lý sợ gánh lỗi (Desire) và thiếu động lực duy trì (Reinforcement).
+4. **Chỉ số nào chứng minh giá trị?**  
+   → AI Verified Resolution Rate (P1 ≥ 70%) không bị mở lại trong 7 ngày, Median Resolution Time (W1 giảm ≥ 20%), P90 (W2 giảm ≥ 10%), QA Pass Rate (Q1 ≥ 95%), Khách liên hệ lại (T1 giảm ≥ 15%), Handoff Completeness (W3 ≥ 98%), Rework Rate (Q2 ≤ 5%) và An toàn tuyệt đối (R1 = 0).
+5. **Khi nào tiếp tục, sửa hoặc dừng?**  
+   → TIẾP TỤC khi vượt qua Gate 90 ngày với toàn bộ 8 chỉ số đạt target; SỬA khi chất lượng QA < 95% hoặc tỷ lệ làm lại > 5% (thu hẹp intent của bot, tăng QA); DỪNG NGAY LẬP TỨC khi phát sinh Critical Error (R1 > 0) để bảo vệ khách hàng và doanh nghiệp.
+
+---
+
+## Danh Mục Nguồn Tham Khảo
+
+- **[S1]** Klarna Press Release (2024-02-27): *Klarna AI assistant handles two-thirds of customer service chats in its first month.* [Link](https://www.prnewswire.com/news-releases/klarna-ai-assistant-handles-two-thirds-of-customer-service-chats-in-its-first-month-302072744.html)
+- **[S2]** Bloomberg News (2025-05-08): *Klarna turns from AI to real-person customer service after cost-cutting concerns.* [Link](https://www.bloomberg.com/news/articles/2025-05-08/klarna-turns-from-ai-to-real-person-customer-service)
+- **[S3]** US SEC Form 424B4 (2025): *Klarna Group Plc Prospectus — Customer Service Operations and Hybrid Model.* [Link](https://www.sec.gov/Archives/edgar/data/2003292/000200329225000052/klarnagroupplc424b4.htm)
+- **[S4]** US SEC Form 20-F / Annual Filing (2026): *Klarna 2025 Annual Operational Review — AI Engagement and Satisfaction.* [Link](https://www.sec.gov/Archives/edgar/data/2003292/000200329226000007/klar-20251231.htm)
