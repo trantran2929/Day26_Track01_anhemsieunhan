@@ -56,3 +56,22 @@ Nhóm tiến hành chẩn đoán qua 5 câu hỏi thực tế và liên kết 3 
   - *Căn cứ bằng chứng:* Báo cáo PR chỉ nêu số lượng chat gộp [S1]; log khảo sát tiền trạm W0 ghi nhận 2 sự cố sai sót chính sách hoàn tiền.
 
 ---
+
+## 4. Thiết kế Cách làm mới: AS-IS so với TO-BE
+
+Nhóm hiện thực hóa đầy đủ **5 yếu tố của một quy trình "Đã ứng dụng" (Adoption)**:
+
+| # | Yếu tố | Hiện trạng cũ (AS-IS) | Cách làm mới (TO-BE) |
+|---|---|---|---|
+| **1** | **Công việc** | Bot cố trả lời tự động mọi ca một cách cào bằng, không phân tầng. | AI xuất hiện tại bước W1 (phân loại rủi ro), W2 (phản hồi tự động ca Low-Risk; soạn nháp ca Medium-Risk), W3 (tạo tóm tắt handoff cho nhân viên). |
+| **2** | **Trách nhiệm** | Không ai chịu trách nhiệm rõ ràng khi bot trả lời sai chính sách. | **CS Operations Lead** chịu trách nhiệm kết quả SLA cuối; **Human CS Agent** chịu trách nghiệm nội dung phê duyệt; **AI PO** chịu trách nhiệm mô hình; **QA Lead** audit độc lập. |
+| **3** | **Kiểm soát** | Câu trả lời không trích nguồn; không kiểm tra mẫu; không có nút báo lỗi. | Mọi phản hồi đều trích dẫn **Versioned Policy Code** có timestamp; kiểm toán mẫu QA 10% hàng ngày; cơ chế **Hard-stop** tức thì khi có sự cố R1. |
+| **4** | **Hành vi** | Nhân viên CS hoang mang, sợ bot cướp việc nhưng ngại nhận ca bot chuyển. | Nhân viên CS nắm rõ ranh giới: AI chỉ hỗ trợ tra cứu và tóm tắt; con người nắm toàn quyền quyết định ca tranh chấp, bồi thường và ngoại lệ. |
+| **5** | **Đo lường** | Chỉ đếm số lượng chat và tỷ lệ tự động hóa gộp. | Đo lường đa tầng từ Mức dùng → Năng suất → Chất lượng → Rủi ro; có Baseline W0, Target và hành động khi chỉ số xấu. |
+
+### Ba thay đổi bắt buộc trong kiến trúc vận hành:
+1. **Nguồn kiểm chứng (Versioned Knowledge):** Bắt buộc mọi câu trả lời của AI phải gắn kèm mã chính sách có hiệu lực (ví dụ: `POL-REFUND-2026.03-v2.1`), có Content Owner và ngày cập nhật.
+2. **Người chịu trách nhiệm cuối cùng:** Nhân viên CS con người là người chốt quyết định cuối cùng đối với ca Medium/High Risk; CS Operations Lead chịu trách nhiệm về chỉ số giải quyết dứt điểm.
+3. **Cơ chế xử lý khi AI không chắc chắn (Structured Handoff):** Khi độ tin cậy của AI < 85% hoặc phát hiện khách hàng bức xúc, hệ thống tự động đóng gói payload bàn giao gồm: *Mã Intent, Mức độ rủi ro, Tóm tắt 3 dòng lịch sử, 2 phương án đề xuất kèm điều khoản chính sách*, chuyển ngay cho nhân viên CS mà không bắt khách hàng lặp lại câu hỏi.
+
+---
