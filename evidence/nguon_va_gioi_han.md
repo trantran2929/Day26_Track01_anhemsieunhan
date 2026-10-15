@@ -84,6 +84,6 @@ Mỗi tương tác trong cohort đều được gắn schema kiểm toán chuẩ
 ## 4. Biên bản xác nhận phản biện chéo (Peer Review Log)
 
 - **Nhóm phản biện chéo**: `Nhóm 02 — FinTech AI Ops (Track 01)`.
-- **Người đại diện phản biện**: Trần Hoàng Nam (Trưởng nhóm) & Lê Thị Mai Anh (Metrics Lead).
+- **Người đại diện phản biện**: Nguyễn Phạm Oanh Oanh và Hoàng Bích Ngọc.
 - **Ngày xác nhận**: 2026-10-14.
 - **Kết quả nghiệm thu**: 100% các ý kiến phản biện về phân tầng rủi ro và bổ sung chỉ số kiểm soát ngữ cảnh bàn giao đã được tích hợp đầy đủ vào bản Dashboard v2 và Memo Quyết Định của nhóm Anh Em Siêu Nhân.
